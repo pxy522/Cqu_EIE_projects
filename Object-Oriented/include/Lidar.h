@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <string>
 #include <fstream>
+#include <nlohmann/json.hpp>
 
 using namespace std;
 
@@ -39,11 +40,12 @@ public:
 
     void save( ofstream& ofs )
     {
-        ofs << "激光雷达信息:" << endl;
-        ofs << "        (a) 型号: " << model << endl;
-        ofs << "        (b) 通道数: " << channels << endl;
-        ofs << "        (c) 测试范围: " << range << endl;
-        ofs << "        (d) 功耗: " << power << endl;
+        json lidarJson;
+        lidarJson["激光雷达型号"] = model;
+        lidarJson["通道数"] = channels;
+        lidarJson["测试范围"] = range;
+        lidarJson["功耗"] = power;
+        ofs << lidarJson.dump(4) << endl;
     }
 };
 

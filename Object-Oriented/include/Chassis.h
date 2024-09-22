@@ -5,8 +5,10 @@
 #include <iomanip>
 #include <string>
 #include <fstream>
+#include <nlohmann/json.hpp>
 
 using namespace std;
+using json = nlohmann::json;
 
 class Chassis
 {
@@ -58,19 +60,20 @@ public:
         cout << setw(20) << "最大行程: " << max_range << endl;
     }
 
-    void save( ofstream& ofs )
+    void save(ofstream& ofs)
     {
-        ofs << "底盘信息:" << endl;
-        ofs << "        (a) 底盘编号: " << id << endl;
-        ofs << "        (b) 底盘型号: " << model << endl;
-        ofs << "        (c) 轴距: " << wheelbase << endl;
-        ofs << "        (d) 轮距: " << track << endl;
-        ofs << "        (e) 最小离地间隙: " << min_ground_clearance << endl;
-        ofs << "        (f) 最小转弯半径: " << min_turning_radius << endl;
-        ofs << "        (g) 驱动形式: " << drive_type << endl;
-        ofs << "        (h) 最大行程: " << max_range << endl;
-    }
+        json chassisJson;
+        chassisJson["底盘编号"] = id;
+        chassisJson["底盘型号"] = model;
+        chassisJson["轴距"] = wheelbase;
+        chassisJson["轮距"] = track;
+        chassisJson["最小离地间隙"] = min_ground_clearance;
+        chassisJson["最小转弯半径"] = min_turning_radius;
+        chassisJson["驱动形式"] = drive_type;
+        chassisJson["最大行程"] = max_range;
 
+        ofs << setw(4) << chassisJson << endl;
+    }
 
 };
 

@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <string>
 #include <fstream>
+#include <nlohmann/json.hpp>
 
 using namespace std;
 
@@ -30,9 +31,10 @@ public:
 
     void save( ofstream& ofs )
     {
-        ofs << "9轴陀螺仪信息:" << endl;
-        ofs << "        (a) 型号: " << model << endl;
-        ofs << "        (b) 厂家: " << manufacturer << endl;
+        json gyroscopeJson;
+        gyroscopeJson["陀螺仪型号"] = model;
+        gyroscopeJson["厂家"] = manufacturer;
+        ofs << gyroscopeJson.dump(4) << endl;
     }
 };
 

@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <string>
 #include <fstream>
+#include <nlohmann/json.hpp>
 
 using namespace std;
 
@@ -31,9 +32,10 @@ public:
 
     void save( ofstream& ofs )
     {
-        ofs << "液晶显示屏信息:" << endl;
-        ofs << "        (a) 尺寸: " << size << endl;
-        ofs << "        (b) 型号: " << model << endl;
+        json lcdJson;
+        lcdJson["液晶显示屏尺寸"] = size;
+        lcdJson["液晶显示屏型号"] = model;
+        ofs << lcdJson.dump(4) << endl;
     }
 };
 

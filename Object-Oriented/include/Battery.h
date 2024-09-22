@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <string>
 #include <fstream>
+#include <nlohmann/json.hpp>
 
 using namespace std;
 
@@ -35,10 +36,11 @@ public:
 
     void save( ofstream& ofs )
     {
-        ofs << "电池模块信息:" << endl;
-        ofs << "        (a) 参数: " << parameter << endl;
-        ofs << "        (b) 对外供电: " << output << endl;
-        ofs << "        (c) 充电时长: " << charge_time << endl;
+        json batteryJson;
+        batteryJson["电池参数"] = parameter;
+        batteryJson["对外供电"] = output;
+        batteryJson["充电时长"] = charge_time;
+        ofs << batteryJson.dump(4) << endl;
     }
 };
 

@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <string>
 #include <fstream>
+#include <nlohmann/json.hpp>
 
 using namespace std;
 
@@ -46,13 +47,14 @@ public:
 
     void save( ofstream& ofs )
     {
-        ofs << "AGX套件信息:" << endl;
-        ofs << "        (a) 型号: " << model << endl;
-        ofs << "        (b) AI: " << ai << endl;
-        ofs << "        (c) CUDA核心: " << cuda_cores << endl;
-        ofs << "        (d) Tensor CORE: " << tensor_cores << endl;
-        ofs << "        (e) 显存: " << memory << endl;
-        ofs << "        (f) 存储: " << storage << endl;
+        json agxkitJson;
+        agxkitJson["AGXKit型号"] = model;
+        agxkitJson["AI性能"] = ai;
+        agxkitJson["CUDA核心数"] = cuda_cores;
+        agxkitJson["Tensor核心数"] = tensor_cores;
+        agxkitJson["内存大小"] = memory;
+        agxkitJson["存储大小"] = storage;
+        ofs << agxkitJson.dump(4) << endl;
     }
 
 };

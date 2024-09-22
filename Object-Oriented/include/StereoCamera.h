@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <string>
 #include <fstream>
+#include <nlohmann/json.hpp>
 
 using namespace std;
 
@@ -47,13 +48,14 @@ public:
 
     void save( ofstream& ofs )
     {
-        ofs << "立体相机信息:" << endl;
-        ofs << "        (a) 型号: " << model << endl;
-        ofs << "        (b) 摄像头: " << camera << endl;
-        ofs << "        (c) RGB帧分辨率: " << rgb_resolution << endl;
-        ofs << "        (d) RGB帧率: " << rgb_fps << endl;
-        ofs << "        (e) FOV: " << fov << endl;
-        ofs << "        (f) 深度帧率: " << depth_fps << endl;
+        json stereoCameraJson;
+        stereoCameraJson["立体相机型号"] = model;
+        stereoCameraJson["相机型号"] = camera;
+        stereoCameraJson["RGB分辨率"] = rgb_resolution;
+        stereoCameraJson["RGB帧率"] = rgb_fps;
+        stereoCameraJson["视场角"] = fov;
+        stereoCameraJson["深度帧率"] = depth_fps;
+        ofs << stereoCameraJson.dump(4) << endl;
     }
 };
 
