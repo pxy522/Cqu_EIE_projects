@@ -71,6 +71,8 @@ public:
         chassisJson["最小转弯半径"] = min_turning_radius;
         chassisJson["驱动形式"] = drive_type;
         chassisJson["最大行程"] = max_range;
+        chassisJson["轮胎型号"] = tire_model;
+        chassisJson["轮胎尺寸"] = tire_size;
 
         ofs << setw(4) << chassisJson << endl;
     }

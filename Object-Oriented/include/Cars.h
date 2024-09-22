@@ -95,7 +95,7 @@ public:
         battery.save(ofs);
     }
 
-    void set( int i )
+    void set()
     {
         cout << "选择你要更改的信息索引并回车: " << endl;
         cout << "1.底盘信息" << endl;
