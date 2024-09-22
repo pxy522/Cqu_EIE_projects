@@ -50,18 +50,50 @@ vector<Car> readJsonInfo( string path )
         cout << "文件打开失败!" << endl;
         return cars;
     }
-    json carsJson;
-    ifs >> carsJson;
-    for (int i = 0; i < carsJson.size(); i++)
-    {
+    nlohmann::json j;
+    ifs >> j;
+    for (int i = 0; i < 10; i++)
+    {   
+        string _id = "车辆" + to_string(i+1);
         Car car;
-        car.id = carsJson[i]["车辆ID"];
-        car.student_id = carsJson[i]["学号"];
-        car.student_name = carsJson[i]["姓名"];
-
+        car.id = j[_id]["车辆ID"];
+        car.student_id = j[_id]["学号"];
+        car.student_name = j[_id]["姓名"];
+        car.chassis.model = j[_id]["底盘信息"]["底盘型号"];
+        car.chassis.wheelbase = j[_id]["底盘信息"]["轴距"];
+        car.chassis.track = j[_id]["底盘信息"]["轮距"];
+        car.chassis.min_ground_clearance = j[_id]["底盘信息"]["最小离地间隙"];
+        car.chassis.min_turning_radius = j[_id]["底盘信息"]["最小转弯半径"];
+        car.chassis.drive_type = j[_id]["底盘信息"]["驱动形式"];
+        car.chassis.max_range = j[_id]["底盘信息"]["最大行程"];
+        car.chassis.tire_model = j[_id]["底盘信息"]["轮胎型号"];
+        car.chassis.tire_size = j[_id]["底盘信息"]["轮胎尺寸"];
+        car.agx_kit.ai = j[_id]["AGX套件信息"]["AI性能"];
+        car.agx_kit.model = j[_id]["AGX套件信息"]["AGXKit型号"];
+        car.agx_kit.cuda_cores = j[_id]["AGX套件信息"]["CUDA核心数"];  // 修改键名
+        car.agx_kit.tensor_cores = j[_id]["AGX套件信息"]["Tensor核心数"];  // 修改键名
+        car.agx_kit.memory = j[_id]["AGX套件信息"]["内存大小"];  // 修改键名
+        car.agx_kit.storage = j[_id]["AGX套件信息"]["存储大小"];
+        car.stereo_camera.camera = j[_id]["立体相机信息"]["相机型号"];  // 修改键名
+        car.stereo_camera.model = j[_id]["立体相机信息"]["立体相机型号"];  // 修改键名
+        car.lidar.channels = j[_id]["激光雷达信息"]["通道数"];
+        car.lidar.model = j[_id]["激光雷达信息"]["激光雷达型号"];  // 修改键名
+        car.lidar.power = j[_id]["激光雷达信息"]["功耗"];
+        car.lidar.range = j[_id]["激光雷达信息"]["测试范围"];
+        car.gyroscope.manufacturer = j[_id]["陀螺仪信息"]["厂家"];
+        car.gyroscope.model = j[_id]["陀螺仪信息"]["陀螺仪型号"];  // 修改键名
+        car.lcd.model = j[_id]["液晶显示屏信息"]["液晶显示屏型号"];  // 修改键名
+        car.lcd.size = j[_id]["液晶显示屏信息"]["液晶显示屏尺寸"];  // 修改键名
+        car.battery.charge_time = j[_id]["电池模块信息"]["充电时长"];
+        car.battery.output = j[_id]["电池模块信息"]["对外供电"];
+        car.battery.parameter = j[_id]["电池模块信息"]["电池参数"];
         cars.push_back(car);
     }
-    ifs.close();
+    cout << "*************" << endl;
+    cout << ">>读取成功!<<" << endl;
+    cout << "*************" << endl;
+    cout << endl;
+
     return cars;
 }
 

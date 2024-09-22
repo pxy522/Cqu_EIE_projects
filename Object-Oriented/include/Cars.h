@@ -49,17 +49,19 @@ public:
         cout << "请输入姓名: ";
         cin >> student_name;
         cout << "生成车辆ID..." << endl;
+        cout << endl;
         id = "cqusn" + getCurrentTime() + student_id;       // 生成车辆ID
         chassis.id = "dp" + student_id;                     // 生成底盘编号
     }
 
     void print()
     {
-        cout << "--------------------------------" << endl;
+        cout << "********************************" << endl;
         cout << "车辆ID: " << id << endl;
         cout << "底盘编号: " << chassis.id << endl;
         cout << "学号: " << student_id << " 姓名: " << student_name << endl;
-        cout << "--------------------------------" << endl;
+        cout << "********************************" << endl;
+        cout << endl;
     }
 
     string getCurrentTime()
@@ -79,9 +81,9 @@ public:
         return time;
     }
 
-    void save(ofstream &ofs)
+    nlohmann::ordered_json save()
     {
-        json carJson;
+        nlohmann::ordered_json carJson;
         carJson["车辆ID"] = id;
         carJson["学号"] = student_id;
         carJson["姓名"] = student_name;
@@ -92,7 +94,8 @@ public:
         carJson["陀螺仪信息"] = gyroscope.save();
         carJson["液晶显示屏信息"] = lcd.save();
         carJson["电池模块信息"] = battery.save();
-        ofs << carJson.dump(4) << endl;
+
+        return carJson;
     }
 
     void set()

@@ -32,13 +32,16 @@ int main()
         cout << "请选择操作: ";
         int choice;
         cin >> choice;
+        cout << endl;
         switch (choice)
         {
         case 1:
             {
                 if (cars.size() >= 10)
                 {
-                    cout << "车辆信息已满!" << endl;
+                    cout << "*****************"<< endl;
+                    cout << ">>车辆信息已满!<<" << endl;
+                    cout << "*****************"<< endl;
                     break;
                 }
                 for (int i = 0; i < 10; i++)
@@ -50,27 +53,39 @@ int main()
                 break;
             }
         case 2:
-            for (int i = 0; i < cars.size(); i++)
             {
-                cars[i].print();
-            }
-            cout << "查看详细信息? (y/n): ";
-            char choice;
-            cin >> choice;
-            if (choice == 'y')
+            int idx = 0;
+            char c, choice;
+            while ( true )
             {
-                for ( auto &car : cars )
+                cars[idx].print();
+                cout << "查看详细信息? (y/n): ";
+
+                cin >> choice;
+                if (choice == 'y')
                 {
-                    car.chassis.print();
-                    car.agx_kit.print();
-                    car.stereo_camera.print();
-                    car.lidar.print();
-                    car.gyroscope.print();
-                    car.lcd.print();
-                    car.battery.print();
+                    cars[idx].chassis.print();
+                    cars[idx].agx_kit.print();
+                    cars[idx].stereo_camera.print();
+                    cars[idx].lidar.print();
+                    cars[idx].gyroscope.print();
+                    cars[idx].lcd.print();
+                    cars[idx].battery.print();
                 }
+
+                cout << "输入 'n' 查看下一辆车, 'p' 查看上一辆车, 'q' 退出: ";
+                cin >> c;
+                cout << endl;
+                if (c == 'n')
+                    idx = (idx + 1) % cars.size();
+                else if (c == 'p')
+                    idx = (idx - 1 + cars.size()) % cars.size();
+                else if (c == 'q')
+                    break;
+                }
+                cout << endl;   
+                break;
             }
-            break;
         case 3:
             modifyCarInfo(cars);
             break;
@@ -80,11 +95,14 @@ int main()
                 cout << "请输入保存路径: ";
                 cin >> path;
                 ofstream ofs(path);
+                
+                json carsJson;
                 for (int i = 0; i < cars.size(); i++)
-                {
-                    cars[i].save(ofs);
+                {   
+                    string id = "车辆" + to_string(i + 1);
+                    carsJson[id] = cars[i].save();
                 }
-                ofs.close();
+                ofs << carsJson.dump(4);
                 break;
             }
         case 5:
@@ -92,6 +110,7 @@ int main()
                 string path;
                 cout << "请输入文件路径: ";
                 cin >> path;
+                cout << endl;
                 cars = readJsonInfo(path);
                 break;
             }
