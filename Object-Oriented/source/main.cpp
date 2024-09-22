@@ -23,10 +23,11 @@ int main()
     {
         cout << "--------------------------------" << endl;
         cout << "1.录入车辆信息" << endl;
-        cout << "2.修改车辆信息" << endl;
-        cout << "3.保存车辆信息" << endl;
-        cout << "4.从文件中读取车辆信息" << endl;
-        cout << "5.退出" << endl;
+        cout << "2.输出车辆信息" << endl;
+        cout << "3.修改车辆信息" << endl;
+        cout << "4.保存车辆信息" << endl;
+        cout << "5.从文件中读取车辆信息" << endl;
+        cout << "6.退出" << endl;
         cout << "--------------------------------" << endl;
         cout << "请选择操作: ";
         int choice;
@@ -49,9 +50,31 @@ int main()
                 break;
             }
         case 2:
-            modifyCarInfo(cars);
+            for (int i = 0; i < cars.size(); i++)
+            {
+                cars[i].print();
+            }
+            cout << "查看详细信息? (y/n): ";
+            char choice;
+            cin >> choice;
+            if (choice == 'y')
+            {
+                for ( auto &car : cars )
+                {
+                    car.chassis.print();
+                    car.agx_kit.print();
+                    car.stereo_camera.print();
+                    car.lidar.print();
+                    car.gyroscope.print();
+                    car.lcd.print();
+                    car.battery.print();
+                }
+            }
             break;
         case 3:
+            modifyCarInfo(cars);
+            break;
+        case 4:
             {
                 string path;
                 cout << "请输入保存路径: ";
@@ -64,7 +87,7 @@ int main()
                 ofs.close();
                 break;
             }
-        case 4:
+        case 5:
             {
                 string path;
                 cout << "请输入文件路径: ";
@@ -72,7 +95,7 @@ int main()
                 cars = readJsonInfo(path);
                 break;
             }
-        case 5:
+        case 6:
             return 0;
         default:
             break;
