@@ -46,7 +46,7 @@ public:
         cout << setw(20) << "深度帧率: " << depth_fps << endl;
     }
 
-    void save( ofstream& ofs )
+    json save()
     {
         json stereoCameraJson;
         stereoCameraJson["立体相机型号"] = model;
@@ -55,7 +55,8 @@ public:
         stereoCameraJson["RGB帧率"] = rgb_fps;
         stereoCameraJson["视场角"] = fov;
         stereoCameraJson["深度帧率"] = depth_fps;
-        ofs << stereoCameraJson.dump(4) << endl;
+        
+        return stereoCameraJson;
     }
 };
 

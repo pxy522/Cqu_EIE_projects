@@ -81,18 +81,18 @@ public:
 
     void save(ofstream &ofs)
     {
-        ofs << "车辆信息:" << endl;
-        ofs << "        (a) 车辆ID: " << id << endl;
-        ofs << "        (b) 底盘编号: " << chassis.id << endl;
-        ofs << "        (c) 学号: " << student_id << endl;
-        ofs << "        (d) 姓名: " << student_name << endl;
-        chassis.save(ofs);
-        agx_kit.save(ofs);
-        stereo_camera.save(ofs);
-        lidar.save(ofs);
-        gyroscope.save(ofs);
-        lcd.save(ofs);
-        battery.save(ofs);
+        json carJson;
+        carJson["车辆ID"] = id;
+        carJson["学号"] = student_id;
+        carJson["姓名"] = student_name;
+        carJson["底盘信息"] = chassis.save();
+        carJson["AGX套件信息"] = agx_kit.save();
+        carJson["立体相机信息"] = stereo_camera.save();
+        carJson["激光雷达信息"] = lidar.save();
+        carJson["陀螺仪信息"] = gyroscope.save();
+        carJson["液晶显示屏信息"] = lcd.save();
+        carJson["电池模块信息"] = battery.save();
+        ofs << carJson.dump(4) << endl;
     }
 
     void set()

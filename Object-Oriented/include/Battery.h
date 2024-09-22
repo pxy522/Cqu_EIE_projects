@@ -34,13 +34,14 @@ public:
         cout << setw(20) << "充电时长: " << charge_time << endl;
     }
 
-    void save( ofstream& ofs )
+    json save()
     {
         json batteryJson;
         batteryJson["电池参数"] = parameter;
         batteryJson["对外供电"] = output;
         batteryJson["充电时长"] = charge_time;
-        ofs << batteryJson.dump(4) << endl;
+        
+        return batteryJson;
     }
 };
 

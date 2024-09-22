@@ -60,7 +60,7 @@ public:
         cout << setw(20) << "最大行程: " << max_range << endl;
     }
 
-    void save(ofstream& ofs)
+    json save()
     {
         json chassisJson;
         chassisJson["底盘编号"] = id;
@@ -74,7 +74,7 @@ public:
         chassisJson["轮胎型号"] = tire_model;
         chassisJson["轮胎尺寸"] = tire_size;
 
-        ofs << setw(4) << chassisJson << endl;
+        return chassisJson;
     }
 
 };

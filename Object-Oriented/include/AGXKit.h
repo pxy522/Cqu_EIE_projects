@@ -45,7 +45,7 @@ public:
         cout << setw(20) << "存储大小: " << storage << endl;
     }
 
-    void save( ofstream& ofs )
+    json save()
     {
         json agxkitJson;
         agxkitJson["AGXKit型号"] = model;
@@ -54,7 +54,8 @@ public:
         agxkitJson["Tensor核心数"] = tensor_cores;
         agxkitJson["内存大小"] = memory;
         agxkitJson["存储大小"] = storage;
-        ofs << agxkitJson.dump(4) << endl;
+        
+        return agxkitJson;
     }
 
 };

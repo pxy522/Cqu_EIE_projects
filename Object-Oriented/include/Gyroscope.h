@@ -29,12 +29,13 @@ public:
         cout << setw(20) << "厂家: " << manufacturer << endl;
     }
 
-    void save( ofstream& ofs )
+    json save()
     {
         json gyroscopeJson;
         gyroscopeJson["陀螺仪型号"] = model;
         gyroscopeJson["厂家"] = manufacturer;
-        ofs << gyroscopeJson.dump(4) << endl;
+        
+        return gyroscopeJson;
     }
 };
 

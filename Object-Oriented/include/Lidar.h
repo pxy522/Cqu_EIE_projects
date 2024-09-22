@@ -38,14 +38,15 @@ public:
         cout << setw(20) << "功耗: " << power << endl;
     }
 
-    void save( ofstream& ofs )
+    json save()
     {
         json lidarJson;
         lidarJson["激光雷达型号"] = model;
         lidarJson["通道数"] = channels;
         lidarJson["测试范围"] = range;
         lidarJson["功耗"] = power;
-        ofs << lidarJson.dump(4) << endl;
+        
+        return lidarJson;
     }
 };
 

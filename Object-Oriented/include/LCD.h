@@ -30,12 +30,13 @@ public:
         cout << setw(20) << "液晶显示屏型号: " << model << endl;
     }
 
-    void save( ofstream& ofs )
+    json save()
     {
         json lcdJson;
         lcdJson["液晶显示屏尺寸"] = size;
         lcdJson["液晶显示屏型号"] = model;
-        ofs << lcdJson.dump(4) << endl;
+        
+        return lcdJson;
     }
 };
 
