@@ -94,6 +94,46 @@ public:
         lcd.save(ofs);
         battery.save(ofs);
     }
+
+    void set( int i )
+    {
+        cout << "选择你要更改的信息索引并回车: " << endl;
+        cout << "1.底盘信息" << endl;
+        cout << "2.AGX套件信息" << endl;
+        cout << "3.立体相机信息" << endl;
+        cout << "4.激光雷达信息" << endl;
+        cout << "5.陀螺仪信息" << endl;
+        cout << "6.液晶显示屏信息" << endl;
+        cout << "7.电池模块信息" << endl;
+        int choice;
+        cin >> choice;
+        switch (choice)
+        {
+        case 1:
+            chassis.set();
+            break;
+        case 2:
+            agx_kit.set();
+            break;
+        case 3:
+            stereo_camera.set();
+            break;
+        case 4:
+            lidar.set();
+            break;
+        case 5:
+            gyroscope.set();
+            break;
+        case 6:
+            lcd.set();
+            break;
+        case 7:
+            battery.set();
+            break;
+        default:
+            break;
+        }
+    }
 };
 
 
