@@ -7,10 +7,12 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 
+#include "Subject.h"
+
 using namespace std;
 
 
-class Lidar
+class Lidar : public Subject
 {
 public:
     string model = "RS-Helios-16p";
@@ -38,9 +40,9 @@ public:
         cout << setw(20) << "功耗: " << power << endl;
     }
 
-    json save()
+    nlohmann::json save()
     {
-        json lidarJson;
+        nlohmann::json lidarJson;
         lidarJson["激光雷达型号"] = model;
         lidarJson["通道数"] = channels;
         lidarJson["测试范围"] = range;

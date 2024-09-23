@@ -7,10 +7,12 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 
+#include "Observer.h"
+
 using namespace std;
 using json = nlohmann::json;
 
-class Chassis
+class Chassis : public Observer
 {
 public:
     string id;
@@ -76,6 +78,20 @@ public:
 
         return chassisJson;
     }
+
+    void update( const string& msg )
+    {
+        cout << "底盘收到消息: " << msg << endl;
+        if ( msg == "前方" ){
+            cout << "小车应该后退" << endl;
+        } else if ( msg == "左前方" ){
+            cout << "小车右转" << endl;
+        } else if ( msg == "右前方" ){
+            cout << "小车左转" << endl;
+        }
+    }
+
+    ~Chassis() {}
 
 };
 
