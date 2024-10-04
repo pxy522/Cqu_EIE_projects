@@ -61,19 +61,24 @@ int main()
     
     // =======================   optimized icp   =======================
 
+    // =======================   gicp   =======================
+        /* pcl 1.4.0 最新加入 */
+        /* 待完善 */
+    // =======================   gicp   =======================
+
     // =======================   svd icp   =======================
-    // pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp_svd;
-    // icp_svd.setInputTarget(cloud_target_ptr);
-    // icp_svd.setInputSource(cloud_source_ptr);
-    // icp_svd.setMaxCorrespondenceDistance(0.3);
-    // icp_svd.setMaximumIterations(30);
-    // icp_svd.setEuclideanFitnessEpsilon(1e-4);
-    // icp_svd.setTransformationEpsilon(1e-4);
-    // icp_svd.align(*cloud_source_svd_transformed_ptr, T_predict);
-    // std::cout << "\n============== SVD ICP =================" << std::endl;
-    // std::cout << "T final: \n"
-    //           << icp_svd.getFinalTransformation() << std::endl;
-    // std::cout << "fitness score: " << icp_svd.getFitnessScore() << std::endl;
+    pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp_svd;
+    icp_svd.setInputTarget(cloud_target_ptr);
+    icp_svd.setInputSource(cloud_source_ptr);
+    icp_svd.setMaxCorrespondenceDistance(0.3);
+    icp_svd.setMaximumIterations(30);
+    icp_svd.setEuclideanFitnessEpsilon(1e-4);
+    icp_svd.setTransformationEpsilon(1e-4);
+    icp_svd.align(*cloud_source_svd_transformed_ptr, T_predict);
+    std::cout << "\n============== SVD ICP =================" << std::endl;
+    std::cout << "T final: \n"
+              << icp_svd.getFinalTransformation() << std::endl;
+    std::cout << "fitness score: " << icp_svd.getFitnessScore() << std::endl;
     // =======================   svd icp   =======================
 
     // 可视化
