@@ -23,6 +23,36 @@ int main(int argc, char *argv[])
     ros::init(argc, argv, "front_end_node");
     ros::NodeHandle nh;
 
+     // 前端类型选择
+    int opt = 0;
+    // 将 front_end_ptr 定义在 switch 语句之外
+    std::shared_ptr<FrontEnd> front_end_ptr;
+
+    while ( (opt = getopt( argc, argv, "hg:s:n" )) != -1 ) {
+        switch ( opt ) {
+            case 'h':
+                std::cout << "Usage: " << argv[0] << " [-g gn_optimized_icp] [-s svd_icp] [-n ndt_icp]" << std::endl;
+                return 0;
+            case 'g':
+                front_end_ptr = std::make_shared<FrontEnd>(FrontEnd::OptimizedICP());
+                break;
+            case 's':
+                front_end_ptr = std::make_shared<FrontEnd>(FrontEnd::ICP());
+                break;
+            case 'n':
+                front_end_ptr = std::make_shared<FrontEnd>(FrontEnd::NDT_ICP());
+                break;
+            default:
+                std::cout << "Usage: " << argv[0] << " [-g gpu_index] [-s save_map] [-n map_name]" << std::endl;
+                return 0;
+        }
+    }
+
+    if ( !front_end_ptr ) {
+        front_end_ptr = std::make_shared<FrontEnd>(FrontEnd::OptimizedICP());
+        std::cout << "No front end type selected, use default front end: Optimized ICP" << std::endl;
+    }
+
     // 三个订阅消息：点云、imu、GNSS
     std::shared_ptr<CloudSubscriber> cloud_sub_ptr = std::make_shared<CloudSubscriber>(nh, "/kitti/velo/pointcloud", 100000);
     std::shared_ptr<IMUSubscriber> imu_sub_ptr = std::make_shared<IMUSubscriber>(nh, "/kitti/oxts/imu", 1000000);
@@ -38,8 +68,6 @@ int main(int argc, char *argv[])
     std::shared_ptr<OdometryPublisher> laser_odom_pub_ptr = std::make_shared<OdometryPublisher>(nh, "laser_odom", "world", "lidar", 100);
     std::shared_ptr<OdometryPublisher> gnss_pub_ptr = std::make_shared<OdometryPublisher>(nh, "gnss", "world", "lidar", 100);
 
-    // 前端
-    std::shared_ptr<FrontEnd> front_end_ptr = std::make_shared<FrontEnd>();
 
     // 定义用来保存点云 imu gnss 当前时刻的信息容器
     std::deque<CloudData> cloud_data_buff;
