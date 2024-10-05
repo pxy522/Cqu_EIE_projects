@@ -34,13 +34,13 @@ int main(int argc, char *argv[])
                 std::cout << "Usage: " << argv[0] << " [-g gn_optimized_icp] [-s svd_icp] [-n ndt_icp]" << std::endl;
                 return 0;
             case 'g':
-                front_end_ptr = std::make_shared<FrontEnd>(FrontEnd::OptimizedICP());
+                front_end_ptr = std::make_shared<FrontEnd>(FrontEnd::AlgorithmType::OptimizedICP);
                 break;
             case 's':
-                front_end_ptr = std::make_shared<FrontEnd>(FrontEnd::ICP());
+                front_end_ptr = std::make_shared<FrontEnd>(FrontEnd::AlgorithmType::ICP);
                 break;
             case 'n':
-                front_end_ptr = std::make_shared<FrontEnd>(FrontEnd::NDT_ICP());
+                front_end_ptr = std::make_shared<FrontEnd>(FrontEnd::AlgorithmType::NDT_ICP);
                 break;
             default:
                 std::cout << "Usage: " << argv[0] << " [-g gpu_index] [-s save_map] [-n map_name]" << std::endl;
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
     }
 
     if ( !front_end_ptr ) {
-        front_end_ptr = std::make_shared<FrontEnd>(FrontEnd::OptimizedICP());
+        front_end_ptr = std::make_shared<FrontEnd>(FrontEnd::AlgorithmType::OptimizedICP);
         std::cout << "No front end type selected, use default front end: Optimized ICP" << std::endl;
     }
 

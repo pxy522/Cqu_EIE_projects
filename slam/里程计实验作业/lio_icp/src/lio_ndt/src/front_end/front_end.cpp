@@ -6,49 +6,34 @@
 
 namespace lio_ndt
 {
-    FrontEnd::FrontEnd( OptimizedICP ):icp_opti_(OptimizedICPGN()),
-                         local_map_ptr_(new CloudData::CLOUD()),
-                         global_map_ptr_(new CloudData::CLOUD()),
-                         result_cloud_ptr_(new CloudData::CLOUD())
+    FrontEnd::FrontEnd( AlgorithmType type )
+        : algorithm_type_(type),
+          local_map_ptr_(new CloudData::CLOUD()),
+          global_map_ptr_(new CloudData::CLOUD()),
+          result_cloud_ptr_(new CloudData::CLOUD())
         {
-            // 设置默认参数，以免类的使用者在匹配之前忘了设置参数
-            icp_opti_.SetMaxCorrespondDistance(1);
-            icp_opti_.SetMaxIterations(2);
-            icp_opti_.SetTransformationEpsilon(0.5);
-            cloud_filter_.setLeafSize(1.5f,1.5f,1.5f);
-            local_map_filter_.setLeafSize(1.0f,1.0f,1.0f);
-            display_filter_.setLeafSize(1.0f,1.0f,1.0f); 
+            registration_ptr_ = CreateRegistrationAlgorithm( type );
+            switch ( type ) {
+                case NDT_ICP:
+                    registration_ptr_->SetTransformationEpsilon(0.01);
+                    registration_ptr_->SetMaximumIterations(35);
+                    registration_ptr_->SetMaxCorrespondDistance(1.0);
+                    registration_ptr_->SetResolution(1.0);
+                    registration_ptr_->SetStepSize(0.1);
+                    break;
+                case ICP:
+                    registration_ptr_->SetTransformationEpsilon(0.01);
+                    registration_ptr_->SetMaximumIterations(35);
+                    registration_ptr_->SetMaxCorrespondDistance(1.0);
+                    break;
+                case OptimizedICP:
+                    registration_ptr_->SetTransformationEpsilon(0.01);
+                    registration_ptr_->SetMaximumIterations(35);
+                    registration_ptr_->SetMaxCorrespondDistance(1.0);
+                    break;
+            }
         }
 
-    FrontEnd::FrontEnd( ICP ):icp_svd_( pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ>() ),
-                         local_map_ptr_(new CloudData::CLOUD()),
-                         global_map_ptr_(new CloudData::CLOUD()),
-                         result_cloud_ptr_(new CloudData::CLOUD())
-        {
-            // 设置默认参数，以免类的使用者在匹配之前忘了设置参数
-            icp_svd_.setMaxCorrespondenceDistance(0.3);
-            icp_svd_.setMaximumIterations(30);
-            icp_svd_.setEuclideanFitnessEpsilon(1e-4);
-            icp_svd_.setTransformationEpsilon(1e-4);
-            cloud_filter_.setLeafSize(1.5f,1.5f,1.5f);
-            local_map_filter_.setLeafSize(1.0f,1.0f,1.0f);
-            display_filter_.setLeafSize(1.0f,1.0f,1.0f); 
-        }
-
-    FrontEnd::FrontEnd( NDT_ICP ):ndt_ptr_( new pcl::NormalDistributionsTransform<CloudData::POINT, CloudData::POINT>() ),
-                         local_map_ptr_(new CloudData::CLOUD()),
-                         global_map_ptr_(new CloudData::CLOUD()),
-                         result_cloud_ptr_(new CloudData::CLOUD())
-        {
-            // 设置默认参数，以免类的使用者在匹配之前忘了设置参数
-            ndt_ptr_->setTransformationEpsilon(0.01);
-            ndt_ptr_->setStepSize(0.1);
-            ndt_ptr_->setResolution(1.0);
-            ndt_ptr_->setMaximumIterations(35);
-            cloud_filter_.setLeafSize(1.5f,1.5f,1.5f);
-            local_map_filter_.setLeafSize(1.0f,1.0f,1.0f);
-            display_filter_.setLeafSize(1.0f,1.0f,1.0f); 
-        }
     
     // 输入当前帧扫描的点云图，对位姿进行更新
     Eigen::Matrix4f FrontEnd::Update(const CloudData& cloud_data)
@@ -76,19 +61,25 @@ namespace lio_ndt
             UpdateNewFrame(current_frame_);
             return current_frame_.pose;
         }
+
         // 不是第一帧，就正常匹配
-        icp_opti_.Match(filtered_cloud_ptr,predict_pose,result_cloud_ptr_,current_frame_.pose);
-        std::cout<<"fitness score:"<<icp_opti_.GetFitnessScore()<<std::endl;
-
-        icp_svd_.setInputTarget(cloud_data.cloud_ptr);
-        icp_svd_.setInputSource(filtered_cloud_ptr);
-        icp_svd_.align(*result_cloud_ptr_, init_pose_);
-        std::cout<<"fitness score:"<<icp_svd_.getFitnessScore()<<std::endl;
-
-        ndt_ptr_->setInputTarget(cloud_data.cloud_ptr);
-        ndt_ptr_->setInputSource(filtered_cloud_ptr);
-        ndt_ptr_->align(*result_cloud_ptr_, init_pose_);
-        std::cout<<"fitness score:"<<ndt_ptr_->getFitnessScore()<<std::endl;
+        switch( algorithm_type_ )
+        {
+            case NDT_ICP:
+                registration_ptr_->SetInputSource(filtered_cloud_ptr);
+                registration_ptr_->Align(filtered_cloud_ptr,predict_pose,result_cloud_ptr_,current_frame_.pose);
+                // std::cout<<"fitness score:"<<ndt_ptr_.getFitnessScore()<<std::endl;
+                break;
+            case ICP:
+                registration_ptr_->SetInputSource(filtered_cloud_ptr);
+                registration_ptr_->Align(filtered_cloud_ptr,predict_pose,result_cloud_ptr_,current_frame_.pose);
+                // std::cout<<"fitness score:"<<icp_svd_.getFitnessScore()<<std::endl;
+                break;
+            case OptimizedICP:
+                registration_ptr_->Align(filtered_cloud_ptr,predict_pose,result_cloud_ptr_,current_frame_.pose);
+                // std::cout<<"fitness score:"<<icp_opti_.GetFitnessScore()<<std::endl;
+                break;
+        }
         
 
         // 此处采用运动模型来做位姿预测（当然也可以用IMU）更新相邻两帧的相对运动
@@ -148,14 +139,14 @@ namespace lio_ndt
         // 更新匹配的目标点云
         if (local_map_frames_.size() < 10) // 如果局部地图数量少于10个，直接设置为目标点云
         {
-            icp_opti_.SetTargetCloud(local_map_ptr_);
+            registration_ptr_->SetInputTarget(local_map_ptr_);
         }
         else // 否则，先对局部地图进行下采样，再加进去
         {
             CloudData::CLOUD_PTR filtered_local_map_ptr(new CloudData::CLOUD());
             local_map_filter_.setInputCloud(local_map_ptr_);
             local_map_filter_.filter(*filtered_local_map_ptr);
-            icp_opti_.SetTargetCloud(filtered_local_map_ptr);
+            registration_ptr_->SetInputTarget(filtered_local_map_ptr);
         }
         
         // 更新全局地图
@@ -203,5 +194,18 @@ namespace lio_ndt
         display_filter_.setInputCloud(result_cloud_ptr_);
         display_filter_.filter(*current_scan_ptr);
         return true;
+    }
+
+    std::unique_ptr<RegistrationAlgorithm> FrontEnd::CreateRegistrationAlgorithm( AlgorithmType type )
+    {
+        switch( type )
+        {
+            case NDT_ICP:
+                return std::make_unique<NDTRegistration>();
+            case ICP:
+                return std::make_unique<ICPRegistration>();
+            case OptimizedICP:
+                return std::make_unique<OptimizedICPRegistration>();
+        }
     }
 }

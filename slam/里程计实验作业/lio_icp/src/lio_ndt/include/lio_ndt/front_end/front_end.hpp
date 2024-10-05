@@ -12,6 +12,7 @@
 #include <mutex>
 #include "lio_ndt/method/optimized_ICP_GN.h"
 #include "lio_ndt/method/common.h"
+#include "lio_ndt/front_end/RegistrationAlgorithm.hpp"
 
 namespace lio_ndt
 {
@@ -27,15 +28,16 @@ namespace lio_ndt
 
     public:
         /* 点云配准算法参数 */
-        struct NDT_ICP { };
-        struct ICP { };
-        struct OptimizedICP { };
+        enum AlgorithmType
+        {
+            NDT_ICP,
+            ICP,
+            OptimizedICP
+        };
     
     public:
         FrontEnd();
-        FrontEnd( NDT_ICP );
-        FrontEnd( ICP );
-        FrontEnd( OptimizedICP );
+        FrontEnd( AlgorithmType type );
         
         Eigen::Matrix4f Update(const CloudData& cloud_data);
         bool SetInitPose(const Eigen::Matrix4f& init_pose);
@@ -45,18 +47,24 @@ namespace lio_ndt
         bool GetNewGlobalMap(CloudData::CLOUD_PTR& global_map_ptr);
         bool GetCurrentScan(CloudData::CLOUD_PTR& current_scan_ptr);
 
+        /* 工厂函数 */
+        std::unique_ptr<RegistrationAlgorithm> CreateRegistrationAlgorithm( AlgorithmType type );
+
     private:
         void UpdateNewFrame(const Frame& new_key_frame);
 
     private:
         // 变量
+        AlgorithmType algorithm_type_;
+
         pcl::VoxelGrid<CloudData::POINT> cloud_filter_;
         pcl::VoxelGrid<CloudData::POINT> local_map_filter_;
         pcl::VoxelGrid<CloudData::POINT> display_filter_;
 
-        pcl::NormalDistributionsTransform<CloudData::POINT, CloudData::POINT>::Ptr ndt_ptr_;
-        pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp_svd_;
-        OptimizedICPGN icp_opti_;
+        // pcl::NormalDistributionsTransform<CloudData::POINT, CloudData::POINT> ndt_ptr_;
+        // pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp_svd_;
+        // OptimizedICPGN icp_opti_;
+        std::unique_ptr<RegistrationAlgorithm> registration_ptr_;   // 智能指针声明时要使用unique_ptr，创建时使用make_unique
         
         std::deque<Frame> local_map_frames_;
         std::deque<Frame> global_map_frames_;
