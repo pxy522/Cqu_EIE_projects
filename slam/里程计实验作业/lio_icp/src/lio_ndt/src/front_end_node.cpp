@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     // 将 front_end_ptr 定义在 switch 语句之外
     std::shared_ptr<FrontEnd> front_end_ptr;
 
-    while ( (opt = getopt( argc, argv, "hg:s:n" )) != -1 ) {
+    while ( (opt = getopt( argc, argv, "hgsn" )) != -1 ) {
         switch ( opt ) {
             case 'h':
                 std::cout << "Usage: " << argv[0] << " [-g gn_optimized_icp] [-s svd_icp] [-n ndt_icp]" << std::endl;
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
                 front_end_ptr = std::make_shared<FrontEnd>(FrontEnd::AlgorithmType::NDT_ICP);
                 break;
             default:
-                std::cout << "Usage: " << argv[0] << " [-g gpu_index] [-s save_map] [-n map_name]" << std::endl;
+                std::cout << "Usage: " << argv[0] << " [-g gn_optimized_icp] [-s svd_icp] [-n ndt_icp]" << std::endl;
                 return 0;
         }
     }
@@ -89,6 +89,7 @@ int main(int argc, char *argv[])
     double init_time = 0.0;
     bool time_inited = false;
     bool has_global_map_published = false;
+    
 
     ros::Rate rate(100); // 设置循环频率100hz
 

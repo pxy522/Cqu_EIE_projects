@@ -58,12 +58,12 @@ void ICPRegistration::SetTransformationEpsilon(double epsilon) {
     icp_.setTransformationEpsilon(epsilon);
 }
 
-void NDTRegistration::Align( const pcl::PointCloud<pcl::PointXYZ>::Ptr &source,
+void ICPRegistration::Align( const pcl::PointCloud<pcl::PointXYZ>::Ptr &source,
                             const Eigen::Matrix4f &predict_pose,
                             pcl::PointCloud<pcl::PointXYZ>:: Ptr &output,
                             Eigen::Matrix4f &result_pose) {
-    ndt_.align(*output, predict_pose);
-    result_pose = ndt_.getFinalTransformation();}
+    icp_.align(*output, predict_pose);
+    result_pose = icp_.getFinalTransformation();}
 
 void ICPRegistration::SetInputSource(const pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud) {
     icp_.setInputSource(cloud);
@@ -101,4 +101,12 @@ void OptimizedICPRegistration::Align( const pcl::PointCloud<pcl::PointXYZ>::Ptr 
                             pcl::PointCloud<pcl::PointXYZ>:: Ptr &output,
                             Eigen::Matrix4f &result_pose) {
     icp_opti_.Match(source, predict_pose, output, result_pose);}
+
+void OptimizedICPRegistration::SetInputSource(const pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud) {
+    return;
+}
+
+void OptimizedICPRegistration::SetInputTarget(const pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud) {
+    icp_opti_.SetTargetCloud(cloud);
+}
 
