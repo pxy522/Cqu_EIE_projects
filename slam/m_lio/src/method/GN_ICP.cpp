@@ -51,7 +51,7 @@ void GN_ICP::align( pcl::PointCloud<pcl::PointXYZ> &output, const Eigen::Matrix4
             if ( !ComputeJacobiHessian( source_cloud_point, transe_cloud_point, target_cloud_point,  // 计算雅可比矩阵和海森矩阵
                                        Hessian, J, B )) continue; 
 
-            delta_x =   Hessian.inverse() * B;
+            delta_x = Hessian.ldlt().solve(B);  // 使用ldlt来求解线性方程组，这比直接求逆更加稳定和高效
 
             if ( delta_x.norm() < _transformation_epsilon ) {                                       // 判断是否收敛
                 _has_converge = true;
