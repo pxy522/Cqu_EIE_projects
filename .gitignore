@@ -92,3 +92,5 @@ CATKIN_IGNORE
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,ros,cmake
 image icon
+.vscode/launch.json
+.vscode/settings.json
