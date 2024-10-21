@@ -12,6 +12,7 @@ set(CMAKE_CXX_STANDARD 14)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
+  rosbag
   std_msgs
   pcl_ros
   geometry_msgs
@@ -40,7 +41,12 @@ file(GLOB_RECURSE NODE_SRCS "src/*_node.cpp")
 file(GLOB_RECURSE THIRD_PARTY_SRCS "third_party/*.cpp")
 #在 ALL_SRCS 剔除 NODE_SRCS THIRD_PARTY_SRCS 所包含的内容
 list(REMOVE_ITEM ALL_SRCS ${NODE_SRCS})
-list(REMOVE_ITEM ALL_SRCS ${THIRD_PARTY_SRCS})                                                          
+list(REMOVE_ITEM ALL_SRCS ${THIRD_PARTY_SRCS})     
+
+# 打印出所有包含的源文件，检查是否遗漏了关键文件
+foreach(SRC_FILE ${catkin_LIBRARIES})
+  message(STATUS "Included source file: ${SRC_FILE}")
+endforeach()
 
 add_executable(test_frame_node src/test_frame_node.cpp  ${ALL_SRCS})
 target_link_libraries(test_frame_node ${catkin_LIBRARIES} ${ALL_TARGET_LIBRARIES})

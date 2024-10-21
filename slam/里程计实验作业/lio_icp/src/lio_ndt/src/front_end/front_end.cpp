@@ -19,11 +19,11 @@ namespace lio_ndt
                     registration_ptr_->SetMaximumIterations(2);
                     registration_ptr_->SetMaxCorrespondDistance(1.0);
                     registration_ptr_->SetResolution(1.0);
-                    registration_ptr_->SetStepSize(0.5);
+                    registration_ptr_->SetStepSize(0.1);
                     break;
                 case ICP:
                     registration_ptr_->SetTransformationEpsilon(0.5);
-                    registration_ptr_->SetMaximumIterations(2);
+                    registration_ptr_->SetMaximumIterations(35);
                     registration_ptr_->SetMaxCorrespondDistance(1.0);
                     break;
                 case OptimizedICP:
