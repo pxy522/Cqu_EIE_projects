@@ -15,11 +15,13 @@ find_package(catkin REQUIRED COMPONENTS
   ugv_sdk
   message_generation
   base_msgs
+  visualization_msgs
 )
 
-## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
 
+## System dependencies are found with CMake's conventions
+find_package(Boost REQUIRED COMPONENTS system)
+find_package(Eigen3 REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -50,7 +52,7 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * uncomment the generate_messages entry below
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
-## Generate messages in the 'msg' folder
+# Generate messages in the 'msg' folder
 # add_message_files(
 #   FILES
 #   ScoutLightCmd.msg
@@ -115,7 +117,6 @@ catkin_package(
  CATKIN_DEPENDS geometry_msgs nav_msgs roscpp std_msgs ugv_sdk message_runtime base_msgs 
 #  DEPENDS system_lib
 )
-
 ###########
 ## Build ##
 ###########
@@ -143,7 +144,12 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(${PROJECT_NAME}_node src/base_bringup_node.cpp src/EIE_base.cpp utils/interface.cpp)
+# 获取src目录下所有子目录的文件
+file(GLOB_RECURSE SOURCES "src/*/*.cpp")
+
+# 添加可执行文件
+add_executable(${PROJECT_NAME}_node ${SOURCES} "src/base_bringup_node.cpp")
+
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
